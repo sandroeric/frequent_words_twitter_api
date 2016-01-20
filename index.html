@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/demo.css">
+	<link rel="stylesheet" href="assets/form-search.css">
+        <link rel="stylesheet" href="assets/jquery.dataTables.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="assets/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+        
+        <script>
+            $(document).ready(function(e){
+                $('[name=search]').keyup(function(){
+                    $('#keyword_view').html(this.value);
+                });
+                $('.form-search').submit(function(e){
+                    e.preventDefault();
+                    $.ajax({
+                        url: 'search.php',
+                        async: false,
+                        data: { search: $('[name=search]').val() },
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (result){
+                            $('#results').DataTable({
+                                data: result,
+                                columns: [
+                                    { title: "Word" },
+                                    { title: "Quantity"  },
+                                ],
+                                destroy: true
+                            }).order([1, 'desc']).draw();
+                        }
+                    });
+                    return false;
+                });
+            });
+        </script>
+    </head>
+    <body>
+        
+        <div class="main-content">
+            <h1 style="text-align: center">What words are frequent in tweets about <span id="keyword_view">...</span>?</h1>
+            <!-- You only need this form and the form-search.css -->
+
+            <form class="form-search">
+                <input type="search" name="search" placeholder="YOUR KEYWORD HERE">
+                <button type="submit">Search</button>
+                <i class="fa fa-search"></i>
+            </form>
+            <div style="width: 50%; margin: 50px auto 0 auto">
+                <table id="results"></table>
+            </div>
+        </div>
+</body>
+</html>
